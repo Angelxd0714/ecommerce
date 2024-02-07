@@ -6,10 +6,12 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
-from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import declarative_base
-Base = declarative_base()
-metadata = MetaData()
+
+Base =declarative_base()
+metadata = Base.metadata
+
+
 class Base(DeclarativeBase):
     pass
 
@@ -20,7 +22,7 @@ class ROl(Base):
     __tablename__ = 'rol'
     id:Mapped[int] = mapped_column(Integer, primary_key=True,autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50),nullable=False) 
-    grupo_rol_permisos:Mapped["GRUPO_ROL_PERMISOS"] = relationship("GRUPO_DE_ROL_PERMISOS", back_populates="gruporol_rol", cascade="all, update")
+    grupo_rol_permisos:Mapped["GRUPO_ROL_PERMISOS"] = relationship("GRUPO_DE_ROL_PERMISOS", back_populates="gruporol_rol", cascade="all, refresh-expire")
     def __repr__(self):
         return f"Rol(id={self.id}, nombre={self.nombre})"
 
@@ -31,7 +33,7 @@ class PERMISOS(Base):
     __tablename__ = 'permisos'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    grupoper:Mapped["GRUPOPERMISOS_PERMISOS"] = relationship("GRUPO_DE_PERMISOS", back_populates="grupopermisos_permisos", cascade="all, update")
+    grupoper:Mapped["GRUPOPERMISOS_PERMISOS"] = relationship("GRUPO_DE_PERMISOS", back_populates="grupopermisos_permisos", cascade="all, refresh-expire")
 
     def __repr__(self):
         return f"PERMISOS(id={self.id}, nombre={self.nombre})"
@@ -43,7 +45,7 @@ class GRUPO_DE_PERMISOS(Base):
     __tablename__ = 'grupo_de_permisos'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    grupoper:Mapped["GRUPOPERMISOS_PERMISOS"] = relationship("GRUPO_DE_PERMISOS", back_populates="grupopermisos_permisos", cascade="all, update")
+    grupoper:Mapped["GRUPOPERMISOS_PERMISOS"] = relationship("GRUPO_DE_PERMISOS", back_populates="grupopermisos_permisos", cascade="all, refresh-expire")
     
     def __repr__(self):
         return f"GRUPO_DE_PERMISOS(id={self.id}, nombre={self.nombre})"
@@ -56,9 +58,9 @@ class GRUPOPERMISOS_PERMISOS(Base):
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     grupopermisos_id:Mapped[int] = mapped_column(Integer, ForeignKey('grupo_de_permisos.id'))
     permisos_id:Mapped[int] = mapped_column(Integer, ForeignKey('permisos.id'))
-    grupopermisos = relationship("GRUPO_DE_PERMISOS", back_populates="grupopermisos_permisos",cascade="all,update")
-    permisos:Mapped[List["PERMISOS"]] = relationship("PERMISOS", back_populates="grupopermisos_permisos",cascade="all,update")
-    grupoper:Mapped["GRUPO_ROL_PERMISOS"] = relationship("GRUPO_DE_PERMISOS", back_populates="grupopermisos_permisos", cascade="all, update")
+    grupopermisos = relationship("GRUPO_DE_PERMISOS", back_populates="grupopermisos_permisos",cascade="all,refresh-expire")
+    permisos:Mapped[List["PERMISOS"]] = relationship("PERMISOS", back_populates="grupopermisos_permisos",cascade="all,refresh-expire")
+    grupoper:Mapped["GRUPO_ROL_PERMISOS"] = relationship("GRUPO_DE_PERMISOS", back_populates="grupopermisos_permisos", cascade="all, refresh-expire")
 
 class GRUPO_ROL_PERMISOS(Base):
     """
@@ -68,9 +70,9 @@ class GRUPO_ROL_PERMISOS(Base):
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     gruporol_id:Mapped[int] = mapped_column(Integer, ForeignKey('grupo_de_permisos.id'))
     rol_id:Mapped[int] = mapped_column(Integer, ForeignKey('rol.id'))
-    grupoper = relationship("GRUPO_DE_PERMISOS", back_populates="gruporol_permisos", cascade="all, update")
-    rol:Mapped["ROl"] = relationship("ROl", back_populates="gruporol_permisos", cascade="all, update")
-    usuarios:Mapped["USUARIOS"] = relationship("USUARIOS", back_populates="cliente", cascade="all, update")
+    grupoper = relationship("GRUPO_DE_PERMISOS", back_populates="gruporol_permisos", cascade="all, refresh-expire")
+    rol:Mapped["ROl"] = relationship("ROl", back_populates="gruporol_permisos", cascade="all, refresh-expire")
+    usuarios:Mapped["USUARIOS"] = relationship("USUARIOS", back_populates="cliente", cascade="all, refresh-expire")
 
 class TIPO_DE_DOCUMENTO(Base):
     """
@@ -79,7 +81,7 @@ class TIPO_DE_DOCUMENTO(Base):
     __tablename__ = 'tipo_de_documento'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    cliente:Mapped["CLIENTES"] = relationship("CLIENTES", back_populates="tipo_de_documento", cascade="all, update")
+    cliente:Mapped["CLIENTES"] = relationship("CLIENTES", back_populates="tipo_de_documento", cascade="all, refresh-expire")
     def __repr__(self):
         return f"TIPO_DE_DOCUMENTO(id={self.id}, nombre={self.nombre})"
 
@@ -90,7 +92,7 @@ class IMAGEN_USUARIO(Base):
     __tablename__ = 'imagen_usuario'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     url:Mapped[str] = mapped_column(String(50), nullable=False)
-    usuarios:Mapped["USUARIOS"] = relationship("USUARIOS", back_populates="cliente", cascade="all, update")
+    usuarios:Mapped["USUARIOS"] = relationship("USUARIOS", back_populates="cliente", cascade="all, refresh-expire")
     
 class CLIENTES(Base):
     """
@@ -106,11 +108,11 @@ class CLIENTES(Base):
     direccion:Mapped[List[str]] = mapped_column(Integer, nullable=True)
     fechaNacimiento:Mapped[Date] = mapped_column(Date, nullable=True)
     tipo_de_documento_id:Mapped[int] = mapped_column(Integer, ForeignKey('tipo_de_documento.id'))
-    tipo_de_documento:Mapped["TIPO_DE_DOCUMENTO"] = relationship("TIPO_DE_DOCUMENTO", back_populates="clientes", cascade="all, update")
-    url_imagen:Mapped[Optional["IMAGEN_USUARIO"]] = relationship("IMAGEN_USUARIO", back_populates="clientes", cascade="all, update")
+    tipo_de_documento:Mapped["TIPO_DE_DOCUMENTO"] = relationship("TIPO_DE_DOCUMENTO", back_populates="clientes", cascade="all, refresh-expire")
+    url_imagen:Mapped[Optional["IMAGEN_USUARIO"]] = relationship("IMAGEN_USUARIO", back_populates="clientes", cascade="all, refresh-expire")
     url_imagen_id:Mapped[int]= mapped_column(Integer, ForeignKey('imagen_usuario.id'))
-    usuarios:Mapped[List["USUARIOS"]] = relationship("USUARIOS", back_populates="cliente", cascade="all, update")
-    det_pedido:Mapped["DET_PEDIDO"] = relationship("DET_PEDIDO", back_populates="cliente", cascade="all, update")
+    usuarios:Mapped[List["USUARIOS"]] = relationship("USUARIOS", back_populates="cliente", cascade="all, refresh-expire")
+    det_pedido:Mapped["DET_PEDIDO"] = relationship("DET_PEDIDO", back_populates="cliente", cascade="all, refresh-expire")
 class USUARIOS(Base):
     """
     Representa el modelo de la tabla USUARIOS
@@ -120,9 +122,9 @@ class USUARIOS(Base):
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
     contrasena:Mapped[str] = mapped_column(String(100), nullable=False)
     cliente_id = mapped_column(Integer, ForeignKey('clientes.cliente_id'))
-    cliente = relationship("CLIENTES", back_populates="usuarios", cascade="all, update")
+    cliente = relationship("CLIENTES", back_populates="usuarios", cascade="all, refresh-expire")
     grupo_rol_permisos_id:Mapped[int] = mapped_column(Integer, ForeignKey('grupo_rol_permisos.id'))
-    grupo_rol_permisos:Mapped["GRUPO_ROL_PERMISOS"] = relationship("GRUPO_ROL_PERMISOS", back_populates="usuarios", cascade="all, update")
+    grupo_rol_permisos:Mapped["GRUPO_ROL_PERMISOS"] = relationship("GRUPO_ROL_PERMISOS", back_populates="usuarios", cascade="all, refresh-expire")
 
     def __repr__(self):
         return f"USUARIOS(id={self.id}, nombre={self.nombre}, contrasena={self.contrasena}, cliente_id={self.cliente_id}, grupo_rol_permisos_id={self.grupo_rol_permisos_id})"
@@ -137,7 +139,7 @@ class TARJETAS(Base):
     fecha_vencimiento:Mapped[Date] = mapped_column(Date, nullable=False)
     cvv:Mapped[int] = mapped_column(Integer, nullable=False)
     monto:Mapped[Numeric] = mapped_column(Numeric, nullable=False)
-    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, update")
+    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, refresh-expire")
     def __repr__(self):
         return f"TARJETAS(id={self.id}, numero={self.numero}, fecha_vencimiento={self.fecha_vencimiento}, cvv={self.cvv}, monto={self.monto})"
 
@@ -149,7 +151,7 @@ class PAYPAL(Base):
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     email:Mapped[str] = mapped_column(String(50))
     monto:Mapped[Numeric] = mapped_column(Numeric, nullable=False)
-    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, update")
+    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, refresh-expire")
     def __repr__(self):
         return f"PAYPAL(id={self.id}, email={self.email}, monto={self.monto})"
     
@@ -160,7 +162,7 @@ class ESTADO_PAGO(Base):
     __tablename__ = 'estado_pago'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, update")
+    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, refresh-expire")
     def __repr__(self):
         return f"ESTADO_PAGO(id={self.id}, nombre={self.nombre})"
     
@@ -172,13 +174,13 @@ class METODOS_PAGO(Base):
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
     cliente_id = mapped_column(Integer, ForeignKey('clientes.cliente_id'))
     fecha_transaccion:Mapped[Date] = mapped_column(Date, nullable=False)
-    cliente = relationship("CLIENTES", back_populates="metodos_pago", cascade="all, update")
+    cliente = relationship("CLIENTES", back_populates="metodos_pago", cascade="all, refresh-expire")
     paypal_id = mapped_column(Integer, ForeignKey('paypal.id'))
-    paypal = relationship("PAYPAL", back_populates="metodos_pago", cascade="all, update")
+    paypal = relationship("PAYPAL", back_populates="metodos_pago", cascade="all, refresh-expire")
     tarjetas_id = mapped_column(Integer, ForeignKey('tarjetas.id'))
-    tarjetas = relationship("TARJETAS", back_populates="metodos_pago", cascade="all, update")
+    tarjetas = relationship("TARJETAS", back_populates="metodos_pago", cascade="all, refresh-expire")
     estado_pago_id = mapped_column(Integer, ForeignKey('estado_pago.id'))
-    estado_pago = relationship("ESTADO_PAGO", back_populates="metodos_pago", cascade="all, update")
+    estado_pago = relationship("ESTADO_PAGO", back_populates="metodos_pago", cascade="all, refresh-expire")
 
 class MUNICIPIOS(Base):
     """
@@ -187,7 +189,7 @@ class MUNICIPIOS(Base):
     __tablename__ = 'municipios'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    departamentos:Mapped["DEPARTAMENTOS"] = relationship("DEPARTAMENTOS", back_populates="municipios", cascade="all, update")
+    departamentos:Mapped["DEPARTAMENTOS"] = relationship("DEPARTAMENTOS", back_populates="municipios", cascade="all, refresh-expire")
     def __repr__(self):
         return f"MUNICIPIOS(id={self.id}, nombre={self.nombre})"
 class CIUDADES(Base):
@@ -197,7 +199,7 @@ class CIUDADES(Base):
     __tablename__ = 'ciudades'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    departamentos:Mapped["DEPARTAMENTOS"] = relationship("DEPARTAMENTOS", back_populates="ciudades", cascade="all, update")
+    departamentos:Mapped["DEPARTAMENTOS"] = relationship("DEPARTAMENTOS", back_populates="ciudades", cascade="all, refresh-expire")
     def __repr__(self):
         return f"CIUDADES(id={self.id}, nombre={self.nombre})"   
 class DEPARTAMENTOS(Base):
@@ -208,10 +210,10 @@ class DEPARTAMENTOS(Base):
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
     municipio_id = mapped_column(Integer, ForeignKey('municipios.id'))
-    municipios:Mapped["MUNICIPIOS"] = relationship("MUNICIPIOS", back_populates="departamentos", cascade="all, update")
+    municipios:Mapped["MUNICIPIOS"] = relationship("MUNICIPIOS", back_populates="departamentos", cascade="all, refresh-expire")
     ciudad_id = mapped_column(Integer, ForeignKey('ciudades.id'))
-    ciudades:Mapped["CIUDADES"] = relationship("CIUDADES", back_populates="departamentos", cascade="all, update")
-    pais:Mapped["PAIS"] = relationship("PAIS", back_populates="departamentos", cascade="all, update")
+    ciudades:Mapped["CIUDADES"] = relationship("CIUDADES", back_populates="departamentos", cascade="all, refresh-expire")
+    pais:Mapped["PAIS"] = relationship("PAIS", back_populates="departamentos", cascade="all, refresh-expire")
     def __repr__(self):
         return f"DEPARTAMENTOS(id={self.id}, nombre={self.nombre})"
 class PAIS(Base):
@@ -221,9 +223,9 @@ class PAIS(Base):
     __tablename__ = 'pais'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    departamentos:Mapped["DEPARTAMENTOS"] = relationship("DEPARTAMENTOS", back_populates="pais", cascade="all, update")
+    departamentos:Mapped["DEPARTAMENTOS"] = relationship("DEPARTAMENTOS", back_populates="pais", cascade="all, refresh-expire")
     departamento_id = mapped_column(Integer, ForeignKey('departamentos.id'))
-    direccion:Mapped["DIRECCION"] = relationship("DIRECCION", back_populates="pais", cascade="all, update")
+    direccion:Mapped["DIRECCION"] = relationship("DIRECCION", back_populates="pais", cascade="all, refresh-expire")
     def __repr__(self):
         return f"PAIS(id={self.id}, nombre={self.nombre})"
     
@@ -239,7 +241,7 @@ class DIRECCION(Base):
     indicador:Mapped[str] = mapped_column(String(50), nullable=False)
     diagonal:Mapped[str] = mapped_column(String(50), nullable=False)
     pais:Mapped[int] = mapped_column(Integer,ForeignKey("pais.id"), nullable=False)
-    pais:Mapped["PAIS"] = relationship("PAIS", back_populates="direccion", cascade="all, update")
+    pais:Mapped["PAIS"] = relationship("PAIS", back_populates="direccion", cascade="all, refresh-expire")
     def __repr__(self):
         return f"DIRECCION(id={self.id}, calle={self.calle}, carrera={self.carrera}, numero={self.numero}, indicador={self.indicador}, diagonal={self.diagonal}, pais={self.pais})"
 
@@ -251,8 +253,8 @@ class IMAGEN_PRODUCTO(Base):
     __tablename__ = 'imagen_producto'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     url:Mapped[str] = mapped_column(String(50), nullable=False)
-    productos:Mapped["PRODUCTOS"] = relationship("PRODUCTOS", back_populates="imagen_producto", cascade="all, update")
-    producto_id = mapped_column(Integer, ForeignKey('productos.id'))
+    productos:Mapped["PRODUCTOS"] = relationship("PRODUCTOS", back_populates="productos", cascade="all, refresh-expire")
+   
     def __repr__(self):
         return f"IMAGEN_PRODUCTO(id={self.id}, url={self.url}, producto_id={self.producto_id})"
 
@@ -263,7 +265,7 @@ class CATEGORIA(Base):
     __tablename__ = 'categoria'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    det_producto:Mapped["DETALLE_PRODUCTO"] = relationship("DETALLE_PRODUCTO", back_populates="categoria", cascade="all, update")
+    det_producto:Mapped["DETALLE_PRODUCTO"] = relationship("DETALLE_PRODUCTO", back_populates="categoria", cascade="all, refresh-expire")
     def __repr__(self):
         return f"CATEGORIA(id={self.id}, nombre={self.nombre})"
 
@@ -271,11 +273,12 @@ class PRODUCTOS(Base):
     """
     Representa el modelo de la tabla PRODUCTOS
     """
+    __tablename__ = 'productos'
     id:Mapped[int]=mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str]=mapped_column(String(50), nullable=False)
-    imagen:Mapped[int]=mapped_column(Integer, ForeignKey('imagen_producto.id'))
-    imagen_producto:Mapped["IMAGEN_PRODUCTO"] = relationship("IMAGEN_PRODUCTO", back_populates="productos", cascade="all, update")
-    detalle_producto:Mapped["DETALLE_PRODUCTO"] = relationship("DETALLE_PRODUCTO", back_populates="productos", cascade="all, update")
+    imagen_id:Mapped[int]=mapped_column(Integer, ForeignKey('imagen_producto.id'))
+    imagen_producto:Mapped["IMAGEN_PRODUCTO"] = relationship("IMAGEN_PRODUCTO", back_populates="productos", cascade="all, refresh-expire")
+    detalle_producto:Mapped["DETALLE_PRODUCTO"] = relationship("DETALLE_PRODUCTO", back_populates="productos", cascade="all, refresh-expire")
     def __repr__(self):
         return f"PRODUCTOS(id={self.id}, nombre={self.nombre})"
 
@@ -289,9 +292,9 @@ class DETALLE_PRODUCTO(Base):
     precio:Mapped[Numeric] = mapped_column(Numeric, nullable=False)
     cantidad:Mapped[int] = mapped_column(Integer, nullable=False)
     categoria:Mapped[int] = mapped_column(Integer, ForeignKey("categoria.id"), nullable=False)
-    categoria:Mapped["CATEGORIA"] = relationship("CATEGORIA", back_populates="detalle_producto", cascade="all, update")
+    categoria:Mapped["CATEGORIA"] = relationship("CATEGORIA", back_populates="detalle_producto", cascade="all, refresh-expire")
     producto_id = mapped_column(Integer, ForeignKey('productos.id'))
-    productos:Mapped["PRODUCTOS"] = relationship("PRODUCTOS", back_populates="detalle_producto", cascade="all, update")
+    productos:Mapped["PRODUCTOS"] = relationship("PRODUCTOS", back_populates="detalle_producto", cascade="all, refresh-expire")
 
 class PEDIDO(Base):
     """
@@ -300,8 +303,8 @@ class PEDIDO(Base):
     __tablename__ = 'pedido'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     cantidad:Mapped[int] = mapped_column(Integer, nullable=False)
-    det_pedido:Mapped["DET_PEDIDO"] = relationship("DET_PEDIDO", back_populates="pedido", cascade="all, update")
-    factura:Mapped["FACTURA"] = relationship("FACTURA", back_populates="pedido", cascade="all, update")
+    det_pedido:Mapped["DET_PEDIDO"] = relationship("DET_PEDIDO", back_populates="pedido", cascade="all, refresh-expire")
+    factura:Mapped["FACTURA"] = relationship("FACTURA", back_populates="pedido", cascade="all, refresh-expire")
 class DET_PEDIDO(Base):
     """
     Representa el modelo de la tabla DET_PEDIDO
@@ -309,12 +312,12 @@ class DET_PEDIDO(Base):
     __tablename__ = 'det_pedido'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     pedido_id:Mapped[int] = mapped_column(Integer, ForeignKey('pedido.id'), nullable=False)
-    pedido:Mapped["PEDIDO"] = relationship("PEDIDO", back_populates="det_pedido", cascade="all, update")
+    pedido:Mapped["PEDIDO"] = relationship("PEDIDO", back_populates="det_pedido", cascade="all, refresh-expire")
     producto_id:Mapped[int] = mapped_column(Integer, ForeignKey('detalle_producto.id'), nullable=False)
-    producto:Mapped["PRODUCTOS"] = relationship("productos", back_populates="det_pedido", cascade="all, update")
+    producto:Mapped["PRODUCTOS"] = relationship("productos", back_populates="det_pedido", cascade="all, refresh-expire")
     fecha_pedido:Mapped[Date] = mapped_column(Date, nullable=False)
     cliente_id:Mapped[int] = mapped_column(Integer, ForeignKey('clientes.cliente_id'), nullable=False)
-    cliente:Mapped["CLIENTES"] = relationship("CLIENTES", back_populates="det_pedido", cascade="all, update")
+    cliente:Mapped["CLIENTES"] = relationship("CLIENTES", back_populates="det_pedido", cascade="all, refresh-expire")
 class FACTURA(Base):
     """
     Representa el modelo de la tabla FACTURA
@@ -325,7 +328,6 @@ class FACTURA(Base):
     fecha_factura:Mapped[Date] = mapped_column(Date, nullable=False)
     total:Mapped[Numeric] = mapped_column(Numeric, nullable=False)
     pedido_id:Mapped[int] = mapped_column(Integer, ForeignKey('pedido.id'), nullable=False)
-    pedido:Mapped["PEDIDO"] = relationship("PEDIDO", back_populates="factura", cascade="all, update")
+    pedido:Mapped["PEDIDO"] = relationship("PEDIDO", back_populates="factura", cascade="all, refresh-expire")
 
 
-Base.metadata = metadata

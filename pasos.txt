@@ -1,0 +1,5 @@
+1 instalar entorno en el volumen del docker
+2 luego instala las librerias
+3 luego instala sqlalchemy,alembic
+4 se debe configurar con un script la url del postgres o docker y de ahi acceder al bd
+5 ejecutar comandos para emigrar
