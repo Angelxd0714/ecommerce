@@ -105,13 +105,13 @@ class CLIENTES(Base):
     email:Mapped[str] = mapped_column(String(50), nullable=False)
     telefono:Mapped[List[int]] = mapped_column(Integer, nullable=True)
     celular:Mapped[List[int]] = mapped_column(Integer, nullable=True)
-    direccion:Mapped[List[str]] = mapped_column(Integer, nullable=True)
+    direccion:Mapped[List[str]] = mapped_column(String(100), nullable=True)
     fechaNacimiento:Mapped[Date] = mapped_column(Date, nullable=True)
     tipo_de_documento_id:Mapped[int] = mapped_column(Integer, ForeignKey('tipo_de_documento.id'))
     tipo_de_documento:Mapped["TIPO_DE_DOCUMENTO"] = relationship("TIPO_DE_DOCUMENTO", back_populates="clientes", cascade="all, refresh-expire")
     url_imagen:Mapped[Optional["IMAGEN_USUARIO"]] = relationship("IMAGEN_USUARIO", back_populates="clientes", cascade="all, refresh-expire")
     url_imagen_id:Mapped[int]= mapped_column(Integer, ForeignKey('imagen_usuario.id'))
-    usuarios:Mapped[List["USUARIOS"]] = relationship("USUARIOS", back_populates="cliente", cascade="all, refresh-expire")
+    usuarios:Mapped["USUARIOS"] = relationship("USUARIOS", back_populates="cliente", cascade="all, refresh-expire",uselist=False)
     det_pedido:Mapped["DET_PEDIDO"] = relationship("DET_PEDIDO", back_populates="cliente", cascade="all, refresh-expire")
 class USUARIOS(Base):
     """
@@ -242,6 +242,7 @@ class DIRECCION(Base):
     diagonal:Mapped[str] = mapped_column(String(50), nullable=False)
     pais:Mapped[int] = mapped_column(Integer,ForeignKey("pais.id"), nullable=False)
     pais:Mapped["PAIS"] = relationship("PAIS", back_populates="direccion", cascade="all, refresh-expire")
+    pedidos:Mapped["PEDIDO"] = relationship("PEDIDOS", back_populates="direccion", cascade="all, refresh-expire")
     def __repr__(self):
         return f"DIRECCION(id={self.id}, calle={self.calle}, carrera={self.carrera}, numero={self.numero}, indicador={self.indicador}, diagonal={self.diagonal}, pais={self.pais})"
 
@@ -291,7 +292,7 @@ class DETALLE_PRODUCTO(Base):
     descripcion:Mapped[str] = mapped_column(String(50), nullable=False)
     precio:Mapped[Numeric] = mapped_column(Numeric, nullable=False)
     cantidad:Mapped[int] = mapped_column(Integer, nullable=False)
-    categoria:Mapped[int] = mapped_column(Integer, ForeignKey("categoria.id"), nullable=False)
+    categoria_id:Mapped[int] = mapped_column(Integer, ForeignKey("categoria.id"), nullable=False)
     categoria:Mapped["CATEGORIA"] = relationship("CATEGORIA", back_populates="detalle_producto", cascade="all, refresh-expire")
     producto_id = mapped_column(Integer, ForeignKey('productos.id'))
     productos:Mapped["PRODUCTOS"] = relationship("PRODUCTOS", back_populates="detalle_producto", cascade="all, refresh-expire")
@@ -305,6 +306,8 @@ class PEDIDO(Base):
     cantidad:Mapped[int] = mapped_column(Integer, nullable=False)
     det_pedido:Mapped["DET_PEDIDO"] = relationship("DET_PEDIDO", back_populates="pedido", cascade="all, refresh-expire")
     factura:Mapped["FACTURA"] = relationship("FACTURA", back_populates="pedido", cascade="all, refresh-expire")
+    direccion_id:Mapped[int] = mapped_column(Integer, ForeignKey('direccion.id'), nullable=False)
+    direccion:Mapped["DIRECCION"] = relationship("DIRECCION", back_populates="pedidos", cascade="all, refresh-expire")
 class DET_PEDIDO(Base):
     """
     Representa el modelo de la tabla DET_PEDIDO

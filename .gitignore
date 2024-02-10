@@ -5,3 +5,4 @@ pay__env
 users_env
 alembic.ini
 __init__.py
+migrations
