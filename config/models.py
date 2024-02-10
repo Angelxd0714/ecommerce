@@ -113,6 +113,7 @@ class CLIENTES(Base):
     url_imagen_id:Mapped[int]= mapped_column(Integer, ForeignKey('imagen_usuario.id'))
     usuarios:Mapped["USUARIOS"] = relationship("USUARIOS", back_populates="cliente", cascade="all, refresh-expire",uselist=False)
     det_pedido:Mapped["DET_PEDIDO"] = relationship("DET_PEDIDO", back_populates="cliente", cascade="all, refresh-expire")
+    metodo_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="cliente", cascade="all, refresh-expire",uselist=False)
 class USUARIOS(Base):
     """
     Representa el modelo de la tabla USUARIOS
@@ -139,7 +140,7 @@ class TARJETAS(Base):
     fecha_vencimiento:Mapped[Date] = mapped_column(Date, nullable=False)
     cvv:Mapped[int] = mapped_column(Integer, nullable=False)
     monto:Mapped[Numeric] = mapped_column(Numeric, nullable=False)
-    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, refresh-expire")
+    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, refresh-expire",uselist=False)
     def __repr__(self):
         return f"TARJETAS(id={self.id}, numero={self.numero}, fecha_vencimiento={self.fecha_vencimiento}, cvv={self.cvv}, monto={self.monto})"
 
@@ -151,7 +152,7 @@ class PAYPAL(Base):
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     email:Mapped[str] = mapped_column(String(50))
     monto:Mapped[Numeric] = mapped_column(Numeric, nullable=False)
-    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, refresh-expire")
+    metodos_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="estado_pago", cascade="all, refresh-expire",uselist=False)
     def __repr__(self):
         return f"PAYPAL(id={self.id}, email={self.email}, monto={self.monto})"
     
