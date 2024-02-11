@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 
-from services.users.functions.userFunctions import UserFunctions
+from functions.userFunctions import UserFunctions
 
 app = Flask(__name__)
 api = Api(app)

@@ -1,6 +1,6 @@
 from flask_restful import Resource
 
-from services.users.models.user import User
+from models.user import User
 
 class UserFunctions(Resource):
     def get(self):
