@@ -111,6 +111,7 @@ class CLIENTES(Base):
     tipo_de_documento:Mapped["TIPO_DE_DOCUMENTO"] = relationship("TIPO_DE_DOCUMENTO", back_populates="clientes", cascade="all, refresh-expire")
     url_imagen:Mapped[Optional["IMAGEN_USUARIO"]] = relationship("IMAGEN_USUARIO", back_populates="clientes", cascade="all, refresh-expire")
     url_imagen_id:Mapped[int]= mapped_column(Integer, ForeignKey('imagen_usuario.id'))
+    usuarios_id:Mapped[int]= mapped_column(Integer, ForeignKey('usuarios.id'))
     usuarios:Mapped["USUARIOS"] = relationship("USUARIOS", back_populates="cliente", cascade="all, refresh-expire",uselist=False)
     det_pedido:Mapped["DET_PEDIDO"] = relationship("DET_PEDIDO", back_populates="cliente", cascade="all, refresh-expire")
     metodo_pago:Mapped["METODOS_PAGO"] = relationship("METODOS_PAGO", back_populates="cliente", cascade="all, refresh-expire",uselist=False)
@@ -122,8 +123,7 @@ class USUARIOS(Base):
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
     contrasena:Mapped[str] = mapped_column(String(100), nullable=False)
-    cliente_id = mapped_column(Integer, ForeignKey('clientes.cliente_id'))
-    cliente = relationship("CLIENTES", back_populates="usuarios", cascade="all, refresh-expire")
+    cliente = relationship("CLIENTES", back_populates="usuarios", cascade="all, refresh-expire",uselist=False)
     grupo_rol_permisos_id:Mapped[int] = mapped_column(Integer, ForeignKey('grupo_rol_permisos.id'))
     grupo_rol_permisos:Mapped["GRUPO_ROL_PERMISOS"] = relationship("GRUPO_ROL_PERMISOS", back_populates="usuarios", cascade="all, refresh-expire")
 
