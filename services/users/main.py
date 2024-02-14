@@ -1,10 +1,4 @@
-from flask import Flask
-from flask_restful import Api
-
-from functions.userFunctions import UserFunctions
-
-app = Flask(__name__)
-api = Api(app)
+from base import *
 
 api.add_resource(UserFunctions, '/users')
 
