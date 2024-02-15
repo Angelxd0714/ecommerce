@@ -1,6 +1,6 @@
 from typing import *
 
-class ROl:
+class ModelRol:
     id:int=None
     nombre:str=None
     def __init__(self):
