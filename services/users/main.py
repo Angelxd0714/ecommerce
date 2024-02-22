@@ -4,7 +4,7 @@ from functions.userFunctions import UserFunctions
 from functions.permissionFunctions import PermissionFunctions
 from functions.groupPermissionsFunctions import GroupPermissionFunctions
 from services.users.functions.GroupPermissionFunctions import GroupPermissionsPermission
-
+from middleware.handleerros import Error
 
 
 api.add_resource(UserFunctions, '/users','/users/<int:id>',endpoint='users')
@@ -17,4 +17,4 @@ if __name__ == '__main__':
     try:
         app.run(debug=True)
     except Exception as e:
-        app.handle_exception(e)
+         Error.get(500, f'Error: {e}')
