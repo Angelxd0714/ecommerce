@@ -66,7 +66,8 @@ class UserFunctions(Resource):
                 self.status = http_status_message(404)
                 return jsonify({'message': 'Users not found', 'status': self.status})
             dict_users = [{"id": user.id, "nombre": user.nombre, "contrasena": user.contrasena,'grupo_id_permiso_roles':user.grupo_id_permiso_roles} for user in query]
-            return jsonify({"users": dict_users})
+            self.status = http_status_message(200)
+            return jsonify({"users": dict_users, "status":self.status})
         except Exception as specific_error:
             return Error.get(500, f'Error: {specific_error}')
     def post(self):
