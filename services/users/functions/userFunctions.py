@@ -5,6 +5,7 @@ from flask import jsonify, request
 from base import * 
 from middleware.handleerros import Error
 import sys
+from utils.encrypt import generate_encrypted_password
 sys.path.append('/home/angel/Documents/ecommerce/')
 from config.models import USUARIOS
 dataBase = db
@@ -73,7 +74,8 @@ class UserFunctions(Resource):
     def post(self):
         try:
             data=request.get_json()
-            user=USUARIOS(nombre=data['nombre'], contrasena=data['contrasena'],grupo_id_permiso_roles=data['grupo_id_permiso'])
+            encrypt = generate_encrypted_password(data['contrasena'])
+            user=USUARIOS(nombre=data['nombre'], contrasena=encrypt,grupo_id_permiso_roles=data['grupo_id_permiso'])
             self.db.session.add(user)
             self.db.session.commit()
             self.status = http_status_message(201)
