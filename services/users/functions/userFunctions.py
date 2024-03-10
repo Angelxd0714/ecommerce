@@ -3,8 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from models.user import User
 from flask import jsonify, request
 from base import * 
-from middleware.handleerros import Error
+from middleware.handleerros import handle_exception, not_found, server_error
+from sqlalchemy.exc import *
 import sys
+from utils.expression import validate_pass
 from utils.encrypt import generate_encrypted_password
 sys.path.append('/home/angel/Documents/ecommerce/')
 from config.models import USUARIOS
@@ -39,7 +41,7 @@ class UserFunctions(Resource):
             else:
                 return self.get_single(id)
         except Exception as specific_error:
-            return Error.get(404, f'Error: {specific_error}')
+            return handle_exception(404, f'Error: {specific_error}')
     def get_single(self, id:int):
         """Get a single user.
         
@@ -55,49 +57,66 @@ class UserFunctions(Resource):
             
             if not user:
                 self.status = http_status_message(404)
-                return jsonify({'message': 'User not found', 'status':self.status})
+                return jsonify({'status':self.status})
             self.status = http_status_message(200)
-            return jsonify({"id": user.id, "nombre": user.nombre, "contrasena": user.contrasena,'grupo_id_permiso_roles':user.grupo_id_permiso_roles,'status':self.status})
+            return jsonify({"id": user.id, "nombre": user.nombre, "contrasena": user.contrasena,'grupo_rol_permisos_id':user.grupo_rol_permisos_id,'status':self.status})
         except Exception as specific_error:
-            return Error.get(500, f'Error: {specific_error}')
+            return handle_exception(500, f'Error: {specific_error}')
     def get_all(self):
         try:
             query = self.db.session.query(USUARIOS).all()
             if not query:
                 self.status = http_status_message(404)
-                return jsonify({'message': 'Users not found', 'status': self.status})
-            dict_users = [{"id": user.id, "nombre": user.nombre, "contrasena": user.contrasena,'grupo_id_permiso_roles':user.grupo_id_permiso_roles} for user in query]
+                return jsonify({'status': self.status})
+            dict_users = [{"id": user.id, "nombre": user.nombre, "contrasena": user.contrasena,'grupo_rol_permisos_id':user.grupo_rol_permisos_id} for user in query]
             self.status = http_status_message(200)
             return jsonify({"users": dict_users, "status":self.status})
         except Exception as specific_error:
-            return Error.get(500, f'Error: {specific_error}')
+            return handle_exception(500, f'Error: {specific_error}')
     def post(self):
         try:
+            
             data=request.get_json()
+            
+            if isinstance(data['nombre'],int):
+                return jsonify({'message':'El nombre no puede ser un numero!'})
+            elif validate_pass(data['contrasena']) is False:
+                return jsonify({'message':'La contraseña debe tener al menos 8 caracteres, al menos una letra mayúscula, al menos una letra minúscula y al menos un dígito!'})   
+            elif isinstance(data['grupo_rol_permisos_id'], str):
+                return jsonify({'message':'El grupo_rol_permisos_id no puede ser un una letra!'})
             encrypt = generate_encrypted_password(data['contrasena'])
-            user=USUARIOS(nombre=data['nombre'], contrasena=encrypt,grupo_id_permiso_roles=data['grupo_id_permiso'])
+            user=USUARIOS(nombre=data['nombre'], contrasena=encrypt,grupo_rol_permisos_id=data['grupo_rol_permisos_id'])
             self.db.session.add(user)
             self.db.session.commit()
             self.status = http_status_message(201)
-            return jsonify({'message':'User created', 'status':self.status})
+            return jsonify({'status':self.status})
         except Exception as specific_error:
-            return Error.get(500, f'Error: {specific_error}')
+        
+            return server_error(specific_error)
 
     def put(self,id:int):
         try:
+            
             user=self.db.session.query(USUARIOS).get(id)
             if not user:
                 self.status = http_status_message(404)
-                return jsonify({'message':'User not found','status':self.status})
+                return jsonify({'status':self.status})
+            if isinstance(data['nombre'],int):
+                return jsonify({'message':'El nombre no puede ser un numero!'})
+            
+            elif isinstance(data['grupo_rol_permisos_id'], str):
+                return jsonify({'message':'El grupo_rol_permisos_id no puede ser un una letra!'})
             data:User=request.get_json()
             user.nombre=data['nombre']
             user.contrasena=data['contrasena']
-            user.grupo_id_permiso_roles=data['grupo_id_permiso']
+            user.grupo_rol_permisos_id=data['grupo_rol_permisos_id']
             self.db.session.commit()
             self.status = http_status_message(201)
             return jsonify({'message':'User updated','status':self.status})
+        except IntegrityError as specific_error:
+            return handle_exception(specific_error)
         except Exception as specific_error:
-            return Error.get(500, f'Error: {specific_error}')
+            return not_found(specific_error)
 
     def delete(self,id:int):
         try:
@@ -107,5 +126,7 @@ class UserFunctions(Resource):
             self.db.session.delete(user)
             self.db.session.commit()
             return jsonify({'message':'User deleted'})
+        except IntegrityError as specific_error:
+            return handle_exception(specific_error)
         except Exception as specific_error:
-            return Error.get(500, f'Error: {specific_error}')
+            return not_found(specific_error)

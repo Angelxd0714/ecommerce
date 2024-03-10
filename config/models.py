@@ -121,7 +121,7 @@ class USUARIOS(Base):
     __tablename__ = 'usuarios'
     id:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement="auto")
     nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    contrasena:Mapped[str] = mapped_column(String(100), nullable=False)
+    contrasena:Mapped[str] = mapped_column(String(255), nullable=False)
     cliente = relationship("CLIENTES", back_populates="usuarios", cascade="all, refresh-expire",uselist=False)
     grupo_rol_permisos_id:Mapped[int] = mapped_column(Integer, ForeignKey('grupo_rol_permisos.id'))
     grupo_rol_permisos:Mapped["GRUPO_ROL_PERMISOS"] = relationship("GRUPO_ROL_PERMISOS", back_populates="usuarios", cascade="all, refresh-expire")

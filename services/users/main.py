@@ -4,9 +4,9 @@ from functions.userFunctions import UserFunctions
 from functions.permissionFunctions import PermissionFunctions
 from functions.groupPermissionsFunctions import GroupPermissionFunctions
 from services.users.functions.GroupPermissionFunctions import GroupPermissionsPermission
-from middleware.handleerros import Error
+from middleware.handleerros import handle_exception
 from functions.groupRolFunctions import GroupRolFunctions
-
+from werkzeug.exceptions import HTTPException
 
 api.add_resource(UserFunctions, '/users','/users/<int:id>',endpoint='users')
 api.add_resource(RolFucntions, '/roles', '/roles/<int:id>',endpoint='roles')
@@ -18,5 +18,5 @@ api.add_resource(GroupRolFunctions, '/group_rol', '/group_rol/<int:id>', endpoin
 if __name__ == '__main__':
     try:
         app.run(debug=True)
-    except Exception as e:
-         Error.get(500, f'Error: {e}')
+    except HTTPException as e:
+         handle_exception(e)
