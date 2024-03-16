@@ -7,3 +7,4 @@ users
 alembic.ini
 __init__.py
 migrations
+.env
