@@ -1,5 +1,6 @@
 from flask_restful import Resource,http_status_message
 from flask_sqlalchemy import SQLAlchemy
+
 from models.user import User
 from flask import jsonify, request
 from base import * 
@@ -9,6 +10,7 @@ import sys
 from utils.expression import validate_pass
 from utils.encrypt import generate_encrypted_password
 sys.path.append('/home/angel/Documents/ecommerce/')
+from services.users.middleware.authentication import auth_required
 from config.models import USUARIOS
 dataBase = db
 
@@ -24,6 +26,7 @@ class UserFunctions(Resource):
             db (SQLAlchemy): The database object to be used for the operations.
         """
         self.db = db
+    @auth_required("view")    
     def get(self,id:int=None)->dict:
         """Get a user or a list of users.
 
@@ -73,6 +76,8 @@ class UserFunctions(Resource):
             return jsonify({"users": dict_users, "status":self.status})
         except Exception as specific_error:
             return handle_exception(500, f'Error: {specific_error}')
+
+    @auth_required("insert")        
     def post(self):
         try:
             
@@ -93,31 +98,29 @@ class UserFunctions(Resource):
         except Exception as specific_error:
         
             return server_error(specific_error)
-
+    @auth_required("update")
     def put(self,id:int):
-        try:
-            
-            user=self.db.session.query(USUARIOS).get(id)
-            if not user:
-                self.status = http_status_message(404)
-                return jsonify({'status':self.status})
-            if isinstance(data['nombre'],int):
-                return jsonify({'message':'El nombre no puede ser un numero!'})
-            
-            elif isinstance(data['grupo_rol_permisos_id'], str):
-                return jsonify({'message':'El grupo_rol_permisos_id no puede ser un una letra!'})
-            data:User=request.get_json()
-            user.nombre=data['nombre']
-            user.contrasena=data['contrasena']
-            user.grupo_rol_permisos_id=data['grupo_rol_permisos_id']
-            self.db.session.commit()
-            self.status = http_status_message(201)
-            return jsonify({'message':'User updated','status':self.status})
-        except IntegrityError as specific_error:
-            return handle_exception(specific_error)
-        except Exception as specific_error:
-            return not_found(specific_error)
-
+            try:
+                user = self.db.session.query(USUARIOS).filter(USUARIOS.id == id).first()
+                if not user:
+                    self.status = http_status_message(404)
+                    return jsonify({'status': self.status})
+                data = request.get_json()
+                if data.get('nombre'):
+                    user.nombre = data['nombre']
+                # Actualizar el campo 'contrasena' si está presente en los datos
+                if data.get('contrasena'):
+                    user.contrasena = data['contrasena']
+                # Actualizar el campo 'grupo_rol_permisos_id' si está presente en los datos
+                if data.get('grupo_rol_permisos_id'):
+                    user.grupo_rol_permisos_id = data['grupo_rol_permisos_id']
+                self.db.session.commit()
+                self.status = http_status_message(201)
+                return jsonify({'message': 'User updated'})
+            except Exception as specific_error:
+                mensaje = str(specific_error)
+                return jsonify({'message':mensaje})
+    @auth_required("delete")
     def delete(self,id:int):
         try:
             user=self.db.session.query(USUARIOS).get(id)

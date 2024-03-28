@@ -1,3 +1,4 @@
+import threading
 from base import *
 from functions.rolFunctions import RolFucntions
 from functions.userFunctions import UserFunctions
@@ -21,8 +22,10 @@ api.add_resource(GroupRolFunctions, '/group_rol', '/group_rol/<int:id>', endpoin
 api.add_resource(TIPO_DOCUMENTOS_FUNCTIONS, '/type_documents', '/type_documents/<int:id>', endpoint='type_documents')
 api.add_resource(IMAGEN_FUNCTIONS, '/images', '/images/<int:id>', endpoint='images')
 api.add_resource(ClienteFunction, '/clients', '/clients/<int:id>', endpoint='clients')
+
 if __name__ == '__main__':
     try:
-        app.run(debug=True)
+        
+        app.run(debug=True,threaded=True)
     except HTTPException as e:
          handle_exception(e)
