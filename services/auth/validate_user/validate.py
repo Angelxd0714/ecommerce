@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from werkzeug.security import check_password_hash
 import sys
-from datetime import datetime,timedelta
+import time
 from generate_token.token import generate_token
 from services.auth.redis.redis import set_token
 from services.auth.send_message import callback
@@ -15,11 +15,22 @@ database = db
 
 
 class Login(Resource):
-    time = datetime.now() + timedelta(minutes=30)
+
+    
+    time = 1800 + int(time.time())
     def __init__(self,db:SQLAlchemy=database):
         self.db = db
         
     def post(self):
+        """
+         Valida el usuario y la contraseña
+         Args:
+             correo (str): Correo del usuario
+             contrasena (str): Contraseña del usuario
+             Returns:
+                 JSON: A JSON object containing the user data.
+        
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('correo', type=str, required=True)
         parser.add_argument('contrasena', type=str, required=True)
@@ -55,6 +66,6 @@ class Login(Resource):
                 permisos_grupo[grupo_nombre].append({"nombre_permiso":permiso_nombre})
             else:
                 permisos_grupo[grupo_nombre] = [{"nombre_permiso":permiso_nombre}]
-        token = generate_token({'cliente_id':correo[0].cliente_id,'correo':correo[0].email,"permisos":permisos_grupo,"expires_at":self.time.isoformat()})  
+        token = generate_token({'cliente_id':correo[0].cliente_id,'correo':correo[0].email,"permisos":permisos_grupo,"exp":self.time})  
         return {'token':token}, 200
             
