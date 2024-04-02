@@ -9,10 +9,10 @@ from fastapi import HTTPException
 
 
 
-router_api_dept = APIRouter()
+router_api_pais = APIRouter()
 
 
-@router_api_dept.get("/departamentos",response_model=list[Pais],tags=["departamentos"],status_code=status.HTTP_200_OK)
+@router_api_pais.get("/departamentos",response_model=list[Pais],tags=["departamentos"],status_code=status.HTTP_200_OK)
 async def get_all(response: Response, db: Session = Depends(get_db)):
     try:
         paises = db.query(PAIS).all()
@@ -23,7 +23,7 @@ async def get_all(response: Response, db: Session = Depends(get_db)):
     except:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al obtener los paises")
     
-@router_api_dept.get("/departamentos/{id}", response_model=Pais, tags=["departamentos"],status_code=status.HTTP_200_OK)
+@router_api_pais.get("/departamentos/{id}", response_model=Pais, tags=["departamentos"],status_code=status.HTTP_200_OK)
 async def get_one(id: int, response: Response, db: Session = Depends(get_db)):
     try:
         pais = db.query(PAIS).filter(PAIS.id == id).first()
@@ -34,7 +34,7 @@ async def get_one(id: int, response: Response, db: Session = Depends(get_db)):
     except:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al obtener el pais")
     
-@router_api_dept.post("/departamentos", response_model=Pais, tags=["departamentos"],status_code=status.HTTP_201_CREATED)
+@router_api_pais.post("/departamentos", response_model=Pais, tags=["departamentos"],status_code=status.HTTP_201_CREATED)
 async def create_pais(pais: Pais, response: Response, db: Session = Depends(get_db)):
     try:
         db.add(pais)
@@ -44,7 +44,7 @@ async def create_pais(pais: Pais, response: Response, db: Session = Depends(get_
     except:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al crear el pais")
 
-@router_api_dept.put("/departamentos/{id}", response_model=Pais, tags=["departamentos"], status_code=status.HTTP_200_OK)
+@router_api_pais.put("/departamentos/{id}", response_model=Pais, tags=["departamentos"], status_code=status.HTTP_200_OK)
 async def update_pais(id: int, pais: Pais, response: Response, db: Session = Depends(get_db)):
     try:
         db.query(PAIS).filter(PAIS.id == id).update(pais.dict())
@@ -54,7 +54,7 @@ async def update_pais(id: int, pais: Pais, response: Response, db: Session = Dep
     except:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al actualizar el pais")
 
-@router_api_dept.delete("/departamentos/{id}", response_model=Pais, tags=["departamentos"], status_code=status.HTTP_200_OK)
+@router_api_pais.delete("/departamentos/{id}", response_model=Pais, tags=["departamentos"], status_code=status.HTTP_200_OK)
 async def delete_pais(id: int, response: Response, db: Session = Depends(get_db)):
     try:
         pais_delete = db.query(PAIS).filter(PAIS.id == id).first()

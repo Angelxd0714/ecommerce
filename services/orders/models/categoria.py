@@ -3,7 +3,7 @@ from datetime import *
 
 from pydantic import BaseModel
 
-class Pedido(BaseModel):
-    id:int = None # unique
-    nombre:str = None
+class Categoria(BaseModel):
+    id:Optional[int] = None # unique
+    nombre:Optional[str]=None 
     

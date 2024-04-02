@@ -5,6 +5,6 @@ from pydantic import BaseModel
 
 class Pedido(BaseModel):
     id:int = None # unique
-    cantidad:str = None | 0
+    cantidad:int = None 
     direccion: int = None
     det_pedido:int = None
