@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, Response,status
+from fastapi import APIRouter, Depends, Request, Response,status
 from sqlalchemy.orm import Session
 import sys
+
+from middleware.authentication import auth_required
 sys.path.append('/home/angel/Documents/ecommerce/')
 from config.models import IMAGEN_PRODUCTO
 from db.connect import get_db
@@ -16,7 +18,8 @@ router_api_imagen_prod = APIRouter()
 
 
 @router_api_imagen_prod.get("/imagen_producto",response_model=list[ImagenProducto],tags=["imagen_producto"])
-async def get_all(response:Response,upload:UploadFile,db:Session=Depends(get_db)):
+@auth_required("view")
+async def get_all(request:Request,response:Response,upload:UploadFile,db:Session=Depends(get_db)):
     try:
         imagen_producto = db.query(IMAGEN_PRODUCTO).all()
         if not imagen_producto:
@@ -27,7 +30,8 @@ async def get_all(response:Response,upload:UploadFile,db:Session=Depends(get_db)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al obtener los productos")
     
 @router_api_imagen_prod.get("/imagen_producto/{id}", response_model=ImagenProducto, tags=["imagen_producto"])
-async def get_one(id:int, response:Response, db:Session=Depends(get_db)):
+@auth_required("view")
+async def get_one(request:Request,id:int, response:Response, db:Session=Depends(get_db)):
     try:
         imagen_producto = db.query(IMAGEN_PRODUCTO).filter(IMAGEN_PRODUCTO.id==id).first()
         if not imagen_producto:
@@ -38,7 +42,8 @@ async def get_one(id:int, response:Response, db:Session=Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al obtener la imagen_producto")
 
 @router_api_imagen_prod.post("/imagen_producto", response_model=ImagenProducto, tags=["imagen_producto"])
-async def create_imagen_producto(upload:UploadFile, response: Response, db: Session = Depends(get_db)):
+@auth_required("insert")
+async def create_imagen_producto(request:Request,upload:UploadFile, response: Response, db: Session = Depends(get_db)):
     file_save = os.mkdirs("uploads/imagen_producto/",exist_ok=True)
     ruta = os.path.join(file_save, upload.filename)
     try:
@@ -57,7 +62,8 @@ async def create_imagen_producto(upload:UploadFile, response: Response, db: Sess
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al crear la imagen_producto")
     
 @router_api_imagen_prod.put("/imagen_producto/{id}", response_model=ImagenProducto, tags=["imagen_producto"])
-async def update_imagen_producto(id:int, upload:UploadFile, response: Response, db: Session = Depends(get_db)):
+@auth_required("update")
+async def update_imagen_producto(request:Request,id:int, upload:UploadFile, response: Response, db: Session = Depends(get_db)):
     file_save = os.mkdirs("uploads/imagen_producto/", exist_ok=True)
     ruta = os.path.join(file_save, upload.filename)
     try:
@@ -77,7 +83,8 @@ async def update_imagen_producto(id:int, upload:UploadFile, response: Response, 
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al actualizar la imagen_producto")
 
 @router_api_imagen_prod.delete("/imagen_producto/{id}", response_model=ImagenProducto, tags=["imagen_producto"])
-async def delete_imagen_producto(id:int, response: Response, db: Session = Depends(get_db)):
+@auth_required("delete")
+async def delete_imagen_producto(request:Request,id:int, response: Response, db: Session = Depends(get_db)):
     try:
         imagen_producto = db.query(IMAGEN_PRODUCTO).filter(IMAGEN_PRODUCTO.id==id).first()
         if not imagen_producto:

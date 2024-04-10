@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, Response,status
+from fastapi import APIRouter, Depends, Request, Response,status
 from sqlalchemy.orm import Session
 import sys
+
+from middleware.authentication import auth_required
 sys.path.append('/home/angel/Documents/ecommerce/')
 from config.models import DET_PEDIDO
 from db.connect import get_db
@@ -12,7 +14,8 @@ from fastapi import HTTPException
 router_api_det_pedido = APIRouter()
 
 @router_api_det_pedido.get("/det_pedido",response_model=list[DetPedido],tags=["det_pedido"])
-async def get_all(response:Response,db:Session=Depends(get_db)):
+@auth_required("view")
+async def get_all(request:Request,response:Response,db:Session=Depends(get_db)):
     try:
         det_pedido = db.query(DET_PEDIDO).all()
         response.status_code = status.HTTP_200_OK
@@ -21,7 +24,8 @@ async def get_all(response:Response,db:Session=Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al obtener los detalle_pedido")
 
 @router_api_det_pedido.get("/det_pedido/{id}", response_model=DetPedido, tags=["det_pedido"])
-async def get_one(id:int, response:Response, db:Session=Depends(get_db)):
+@auth_required("view")
+async def get_one(request:Request,id:int, response:Response, db:Session=Depends(get_db)):
     try:
         det_pedido = db.query(DET_PEDIDO).filter(DET_PEDIDO.id == id).first()
         if not det_pedido:
@@ -32,7 +36,8 @@ async def get_one(id:int, response:Response, db:Session=Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al obtener el detalle_pedido")
 
 @router_api_det_pedido.post("/det_pedido", response_model=DetPedido, tags=["det_pedido"])
-async def create_det_pedido(det_pedido: DetPedido, response: Response, db: Session = Depends(get_db)):
+@auth_required("insert")
+async def create_det_pedido(request:Request,det_pedido: DetPedido, response: Response, db: Session = Depends(get_db)):
     try:
         db.add(det_pedido)
         db.commit()
@@ -43,7 +48,8 @@ async def create_det_pedido(det_pedido: DetPedido, response: Response, db: Sessi
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al crear el detalle_pedido")
 
 @router_api_det_pedido.put("/det_pedido/{id}", response_model=DetPedido, tags=["det_pedido"])
-async def update_det_pedido(id:int, det_pedido: DetPedido, response: Response, db: Session = Depends(get_db)):
+@auth_required("update")
+async def update_det_pedido(request:Request,id:int, det_pedido: DetPedido, response: Response, db: Session = Depends(get_db)):
     try:
         det_pedido=db.query(DET_PEDIDO).filter(DET_PEDIDO.id == id).update(det_pedido.dict())
         if not det_pedido:
@@ -56,7 +62,8 @@ async def update_det_pedido(id:int, det_pedido: DetPedido, response: Response, d
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al actualizar el detalle_pedido")
 
 @router_api_det_pedido.delete("/det_pedido/{id}", response_model=DetPedido, tags=["det_pedido"])
-async def delete_det_pedido(id: int, response: Response, db: Session = Depends(get_db)):
+@auth_required("delete")
+async def delete_det_pedido(request:Request,id: int, response: Response, db: Session = Depends(get_db)):
     try:
         det_pedido = db.query(DET_PEDIDO).filter(DET_PEDIDO.id == id).first()
         if not det_pedido:

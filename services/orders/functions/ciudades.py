@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response,status
+from fastapi import APIRouter, Depends, Request, Response,status
 from sqlalchemy.orm import Session
 import sys
 sys.path.append('/home/angel/Documents/ecommerce/')
@@ -6,14 +6,15 @@ from config.models import CIUDADES
 from db.connect import get_db
 from models.ciudades import Ciudades
 from fastapi import HTTPException
-
+from middleware.authentication import auth_required
 
 
 router_api_ciu = APIRouter()
 
 
 @router_api_ciu.get("/ciudades",response_model=list[Ciudades],tags=["ciudades"],status_code=status.HTTP_200_OK)
-async def get_all(response: Response, db: Session = Depends(get_db)):
+@auth_required("view")  # El decorador auth_required() recibe el nombre del rol que debe tener el usuario para acceder a la ruta.
+async def get_all(request:Request,response: Response, db: Session = Depends(get_db)):
     try:
         ciudades = db.query(CIUDADES).all()
         if ciudades is None:
@@ -25,7 +26,8 @@ async def get_all(response: Response, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error interno del servidor: {e}")
     
 @router_api_ciu.get("/ciudades/{id}", response_model=Ciudades, tags=["ciudades"],status_code=status.HTTP_200_OK)
-async def get_one(id: int, response: Response, db: Session = Depends(get_db)):
+@auth_required("view")  # El decorador auth_required() recibe el nombre del rol que debe tener el usuario para acceder a la ruta.
+async def get_one(id: int,request:Request, response: Response, db: Session = Depends(get_db)):
     try:
         ciudad = db.query(CIUDADES).filter(CIUDADES.id == id).first()
         if ciudad is None:
@@ -36,7 +38,8 @@ async def get_one(id: int, response: Response, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error interno del servidor: {e}")
 
 @router_api_ciu.post("/ciudades", response_model=Ciudades, tags=["ciudades"],status_code=status.HTTP_200_OK)
-async def create_ciudad(ciudad:Ciudades,response:Response, db:Session=Depends(get_db)):
+@auth_required("insert")  # El decorador auth_required() recibe el nombre del rol que debe tener el usuario para acceder a la ruta.
+async def create_ciudad(request:Request,ciudad:Ciudades,response:Response, db:Session=Depends(get_db)):
     try:
         db.add(ciudad)
         db.commit()
@@ -47,7 +50,8 @@ async def create_ciudad(ciudad:Ciudades,response:Response, db:Session=Depends(ge
 
 
 @router_api_ciu.put("/ciudades/{id}", response_model=Ciudades, tags=["ciudades"],status_code=200)
-async def update_ciudad(id:int, ciudad:Ciudades,response:Response, db:Session=Depends(get_db)):
+@auth_required("update")  # El decorador auth_required() recibe el nombre del rol que debe tener el usuario para acceder a la ruta.
+async def update_ciudad(request:Request,id:int, ciudad:Ciudades,response:Response, db:Session=Depends(get_db)):
     try:
         ciudad_update = db.query(CIUDADES).filter(CIUDADES.id==id).first()
         if ciudad_update is None:
@@ -60,7 +64,8 @@ async def update_ciudad(id:int, ciudad:Ciudades,response:Response, db:Session=De
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e)
     
 @router_api_ciu.delete("/ciudades/{id}", response_model=Ciudades, tags=["ciudades"],status_code=200)
-async def delete_ciudad(id:int,response:Response ,db:Session=Depends(get_db)):
+@auth_required("delete")  # El decorador auth_required() recibe el nombre del rol que debe tener el usuario para acceder a la ruta.
+async def delete_ciudad(request:Request,id:int,response:Response ,db:Session=Depends(get_db)):
     try:
         ciudad_delete = db.query(CIUDADES).filter(CIUDADES.id==id).first()
         if ciudad_delete is None:

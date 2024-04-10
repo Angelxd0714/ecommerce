@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, Response,status
+from fastapi import APIRouter, Depends, Request, Response,status
 from sqlalchemy.orm import Session
 import sys
+
+from middleware.authentication import auth_required
 sys.path.append('/home/angel/Documents/ecommerce/')
 from config.models import DETALLE_PRODUCTO
 from db.connect import get_db
@@ -13,7 +15,8 @@ router_api_det_prod= APIRouter()
 
 
 @router_api_det_prod.get("/detalle_producto",response_model=list[DetProducto],tags=["detalle_producto"],status_code=status.HTTP_200_OK)
-async def get_all(response:Response,db:Session=Depends(get_db)):
+@auth_required("view")
+async def get_all(request:Request,response:Response,db:Session=Depends(get_db)):
  try:
   detalle_producto = db.query(DETALLE_PRODUCTO).all()
   if not detalle_producto:
@@ -24,7 +27,8 @@ async def get_all(response:Response,db:Session=Depends(get_db)):
   raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al obtener las detalle_producto")
  
 @router_api_det_prod.get("/detalle_producto/{id}", response_model=DetProducto, tags=["detalle_producto"],)
-async def get_one(id:int, response:Response, db:Session=Depends(get_db)):
+@auth_required("view")
+async def get_one(request:Request,id:int, response:Response, db:Session=Depends(get_db)):
     try:
         detalle_producto = db.query(DETALLE_PRODUCTO).filter(DETALLE_PRODUCTO.id==id).first()
         if not detalle_producto:
@@ -35,7 +39,8 @@ async def get_one(id:int, response:Response, db:Session=Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al obtener el detalle_producto")
     
 @router_api_det_prod.post("/detalle_producto", response_model=DetProducto, tags=["detalle_producto"], status_code=status.HTTP_201_CREATED)
-async def create_detalle_producto(detalle_producto: DetProducto, response: Response, db: Session = Depends(get_db)):
+@auth_required("insert")
+async def create_detalle_producto(request:Request,detalle_producto: DetProducto, response: Response, db: Session = Depends(get_db)):
    try:
        db.add(detalle_producto)
        db.commit()
@@ -46,7 +51,8 @@ async def create_detalle_producto(detalle_producto: DetProducto, response: Respo
        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al crear el detalle_producto")
    
 @router_api_det_prod.put("/detalle_producto/{id}", response_model=DetProducto, tags=["detalle_producto"], status_code=status.HTTP_200_OK)
-async def update_detalle_producto(id:int, detalle_producto: DetProducto, response: Response, db: Session = Depends(get_db)):
+@auth_required("update")
+async def update_detalle_producto(request:Request,id:int, detalle_producto: DetProducto, response: Response, db: Session = Depends(get_db)):
    try:
        db.query(DETALLE_PRODUCTO).filter(DETALLE_PRODUCTO.id==id).update(detalle_producto.dict())
        db.commit()
@@ -56,7 +62,8 @@ async def update_detalle_producto(id:int, detalle_producto: DetProducto, respons
        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al actualizar el detalle_producto")
    
 @router_api_det_prod.delete("/detalle_producto/{id}", response_model=DetProducto, tags=["detalle_producto"], status_code=status.HTTP_200_OK)
-async def delete_detalle_producto(id:int, response: Response, db: Session = Depends(get_db)):
+@auth_required("delete")
+async def delete_detalle_producto(request:Request,id:int, response: Response, db: Session = Depends(get_db)):
    try:
        detalle_producto = db.query(DETALLE_PRODUCTO).filter(DETALLE_PRODUCTO.id==id).first()
        if not detalle_producto:

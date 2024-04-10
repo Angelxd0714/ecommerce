@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException,status,Response
 
 from sqlalchemy.orm import Session
 import sys
+
+from middleware.authentication import auth_required
 sys.path.append('/home/angel/Documents/ecommerce/')
 from config.models import FACTURA
 from db.connect import get_db
@@ -10,6 +12,7 @@ from models.facturas import Facturas
 router_api_factura = APIRouter()
 
 @router_api_factura.get("/factura",response_model=list[Facturas],tags=["factura"])
+@auth_required("view")
 async def get_all(response:Response,db:Session=Depends(get_db)):
     try:
         factura = db.query(FACTURA).all()
@@ -19,6 +22,7 @@ async def get_all(response:Response,db:Session=Depends(get_db)):
         raise HTTPException(status_code=404, detail="Factura no encontrada")
     
 @router_api_factura.get("/factura/{id}", response_model=Facturas, tags=["factura"])
+@auth_required("view")
 async def get_one(id:int, response:Response, db:Session=Depends(get_db)):
     try:
         factura = db.query(FACTURA).filter(FACTURA.id == id).first()
@@ -28,6 +32,7 @@ async def get_one(id:int, response:Response, db:Session=Depends(get_db)):
         raise HTTPException(status_code=404, detail="Factura no encontrada")
     
 @router_api_factura.post("/factura",response_model=Facturas,tags=["factura"])
+@auth_required("insert")
 async def create_factura(factura: Facturas,response:Response,db:Session=Depends(get_db)):
     try:
         db.add(factura)
@@ -41,6 +46,7 @@ async def create_factura(factura: Facturas,response:Response,db:Session=Depends(
 
 
 @router_api_factura.put("/factura/{id}",response_model=Facturas,tags=["factura"])
+@auth_required("update")
 async def update_factura(id:int, factura: Facturas,response:Response,db:Session=Depends(get_db)):
     try:
         factura_update = db.query(FACTURA).filter(FACTURA.id == id).update(factura.dict(),synchronize_session=False)
@@ -54,6 +60,7 @@ async def update_factura(id:int, factura: Facturas,response:Response,db:Session=
     
 
 @router_api_factura.delete("/factura/{id}", response_model=Facturas, tags=["factura"])
+@auth_required("delete")
 async def delete_factura(id: int, response: Response, db: Session = Depends(get_db)):
     try:
         factura = db.query(FACTURA).filter(FACTURA.id == id).first()

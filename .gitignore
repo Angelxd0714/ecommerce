@@ -8,3 +8,4 @@ alembic.ini
 __init__.py
 migrations
 .env
+node_modules
