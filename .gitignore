@@ -9,3 +9,5 @@ __init__.py
 migrations
 .env
 node_modules
+.routify
+.svelte-kit
