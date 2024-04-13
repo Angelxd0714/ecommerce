@@ -2,6 +2,13 @@
 	import { Router, Link, Route } from 'svelte-routing';
 	import Home from '../home.svelte';
 	import Producto from '../producto.svelte';
+	import { onMount } from 'svelte';
+	export let url = '';
+	
+
+
+	// In your component logic:
+	
 </script>
 
 <div class="navbar bg-base-100">
@@ -13,7 +20,7 @@
 	<div class="navbar-center">
 		<div class="navbar-links">
 			<!-- Contenedor adicional -->
-			<Router>
+			<Router {url}>
 				<Link to="/" class="btn btn-ghost text-xl">Inicio</Link>
 				<Link to="/productos" class="btn btn-ghost text-xl">Productos</Link>
 				<Link to="/contacto" class="btn btn-ghost text-xl">Contacto</Link>
@@ -81,9 +88,9 @@
 	</div>
 </div>
 
-<Router>
+<Router {url}>
 	<Route path="/">
 		<Home></Home>
 	</Route>
-    <Route path="/productos" component={Producto} />
+	<Route path="/productos" component={Producto} />
 </Router>
