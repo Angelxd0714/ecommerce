@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Router, Link, Route } from 'svelte-routing';
 	import Home from '../home.svelte';
+	import Producto from '../producto.svelte';
 </script>
 
 <div class="navbar bg-base-100">
@@ -84,4 +85,5 @@
 	<Route path="/">
 		<Home></Home>
 	</Route>
+    <Route path="/productos" component={Producto} />
 </Router>
