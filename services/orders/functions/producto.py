@@ -74,3 +74,5 @@ async def delete_producto(request:Request,id: int, response: Response, db: Sessi
         return producto
     except:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al borrar el producto")
+
+

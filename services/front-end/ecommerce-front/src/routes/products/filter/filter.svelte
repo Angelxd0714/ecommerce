@@ -1,14 +1,18 @@
 <script>
-  import { AccordionItem, Accordion } from 'flowbite-svelte';
+  import { Button, Dropdown, DropdownItem, Checkbox, GradientButton } from 'flowbite-svelte';
+  import { ChevronDownOutline } from 'flowbite-svelte-icons';
+  export let nombre = "";
 </script>
 
-<Accordion flush>
-  <AccordionItem>
-    <span slot="header">Header 2-1</span>
-    <p class="mb-2 text-gray-500 dark:text-gray-400">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ...</p>
-  </AccordionItem>
-  <AccordionItem>
-    <span slot="header">Header 2-2</span>
-    <p class="mb-2 text-gray-500 dark:text-gray-400">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ...</p>
-  </AccordionItem>
-</Accordion>
+<Button color="alternative" pill>Filtre por: {nombre}</Button>
+<Dropdown class="w-44 p-3 space-y-3 text-sm">
+  <li>
+    <Checkbox>Default checkbox</Checkbox>
+  </li>
+  <li>
+    <Checkbox checked>Checked state</Checkbox>
+  </li>
+  <li>
+    <Checkbox>Default checkbox</Checkbox>
+  </li>
+</Dropdown>
