@@ -27,5 +27,4 @@ app.include_router(router_api_det_pedido)
 app.include_router(router_api_det_prod)
 
 #puerto 8000
-
 uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -46,7 +46,7 @@ async def create_producto(request:Request,producto: Producto, response: Response
         db.add(producto)
         db.commit()
         response.status_code = status.HTTP_201_CREATED
-        return producto
+        return {'success': 200, 'message': 'Producto created successfully'}
     except:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al crear el producto")
 
