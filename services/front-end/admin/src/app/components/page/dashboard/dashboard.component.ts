@@ -3,7 +3,7 @@ import { NavbarComponent } from "./navbar/navbar.component";
 import { DrawComponent } from "./draw/draw.component";
 import { ProductsComponent } from "../products/products.component";
 import { RouterOutlet } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 
 @Component({
@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
     standalone: true,
     templateUrl: './dashboard.component.html',
     styleUrl: './dashboard.component.css',
-    imports: [NavbarComponent, DrawComponent, ProductsComponent, RouterOutlet]
+    imports: [NavbarComponent, DrawComponent, ProductsComponent, RouterOutlet,HttpClientModule]
 })
 export class DashboardComponent {
     pageTitle: string = "Dashboard"

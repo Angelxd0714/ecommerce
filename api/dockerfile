@@ -3,9 +3,8 @@ FROM nginx
 
 # Copia el archivo de configuración de Nginx al contenedor
 COPY api_gateway.conf /etc/nginx/conf.d/api_gateway.conf
-
 # Expone el puerto 80 para las solicitudes HTTP
 EXPOSE 80
-
+#RUN mkdir -p /etc/nginx/api_conf.d
 # Comando para iniciar Nginx cuando se inicie el contenedor
 CMD ["nginx", "-g", "daemon off;"]

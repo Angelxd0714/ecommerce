@@ -50,22 +50,18 @@
         </div>
         <!-- /.card-header -->
         <!-- form start -->
-        <form>
+        <form [formGroup]="categoria">
             <div class="card-body">
                 <div class="form-group">
-                    <label for="exampleInputEmail1">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                    <label for="exampleInputPassword1">Nombre</label>
+                    <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Nombre" formControlName="nombre" >
                 </div>
 
             </div>
             <!-- /.card-body -->
 
             <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" (click)="onSubmit()" class="btn btn-primary" [disabled]="validarCampor()">Enviar</button>
             </div>
         </form>
     </div> <!-- /.card -->
