@@ -1,7 +1,7 @@
 import {
   Title
-} from "./chunk-HUMRT7UT.js";
-import "./chunk-FDGLRH7H.js";
+} from "./chunk-IFISKYM4.js";
+import "./chunk-KJGM2PGZ.js";
 import {
   DOCUMENT,
   HashLocationStrategy,
@@ -10,7 +10,7 @@ import {
   LocationStrategy,
   PathLocationStrategy,
   ViewportScroller
-} from "./chunk-VR7XAWCT.js";
+} from "./chunk-XAS4SJBG.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   APP_INITIALIZER,
@@ -52,8 +52,6 @@ import {
   Subscription,
   Version,
   ViewContainerRef,
-  __spreadProps,
-  __spreadValues,
   afterNextRender,
   booleanAttribute,
   catchError,
@@ -113,7 +111,11 @@ import {
   ɵɵloadQuery,
   ɵɵqueryRefresh,
   ɵɵsanitizeUrlOrResourceUrl
-} from "./chunk-ERVMBA57.js";
+} from "./chunk-X6RUONED.js";
+import {
+  __spreadProps,
+  __spreadValues
+} from "./chunk-WKYGNSYM.js";
 
 // node_modules/@angular/router/fesm2022/router.mjs
 var PRIMARY_OUTLET = "primary";
@@ -1808,12 +1810,29 @@ var RouterOutlet = _RouterOutlet;
     }]
   });
 })();
-var OutletInjector = class {
+var OutletInjector = class _OutletInjector {
+  /**
+   * This injector has a special handing for the `ActivatedRoute` and
+   * `ChildrenOutletContexts` tokens: it returns corresponding values for those
+   * tokens dynamically. This behavior is different from the regular injector logic,
+   * when we initialize and store a value, which is later returned for all inject
+   * requests.
+   *
+   * In some cases (e.g. when using `@defer`), this dynamic behavior requires special
+   * handling. This function allows to identify an instance of the `OutletInjector` and
+   * create an instance of it without referring to the class itself (so this logic can
+   * be invoked from the `core` package). This helps to retain dynamic behavior for the
+   * mentioned tokens.
+   *
+   * Note: it's a temporary solution and we should explore how to support this case better.
+   */
+  __ngOutletInjector(parentInjector) {
+    return new _OutletInjector(this.route, this.childContexts, parentInjector);
+  }
   constructor(route, childContexts, parent) {
     this.route = route;
     this.childContexts = childContexts;
     this.parent = parent;
-    this.__ngOutletInjector = true;
   }
   get(token, notFoundValue) {
     if (token === ActivatedRoute) {
@@ -5499,7 +5518,7 @@ function mapToCanDeactivate(providers) {
 function mapToResolve(provider) {
   return (...params) => inject(provider).resolve(...params);
 }
-var VERSION = new Version("17.3.5");
+var VERSION = new Version("17.3.6");
 export {
   ActivatedRoute,
   ActivatedRouteSnapshot,
@@ -5582,7 +5601,7 @@ export {
 
 @angular/router/fesm2022/router.mjs:
   (**
-   * @license Angular v17.3.5
+   * @license Angular v17.3.6
    * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)

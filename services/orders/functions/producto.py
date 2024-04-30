@@ -43,7 +43,8 @@ async def get_one(request:Request,id:int, response:Response, db:Session=Depends(
 @auth_required("insert")
 async def create_producto(request:Request,producto: Producto, response: Response, db: Session = Depends(get_db)):
     try:
-        db.add(producto)
+        categoria = PRODUCTOS(**producto.dict())
+        db.add(categoria)
         db.commit()
         response.status_code = status.HTTP_201_CREATED
         return {'success': 200, 'message': 'Producto created successfully'}

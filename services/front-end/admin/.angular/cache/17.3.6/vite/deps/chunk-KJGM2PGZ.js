@@ -3,7 +3,7 @@ import {
   XhrFactory,
   isPlatformServer,
   parseCookieValue
-} from "./chunk-VR7XAWCT.js";
+} from "./chunk-XAS4SJBG.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -19,9 +19,6 @@ import {
   PendingTasks,
   RuntimeError,
   TransferState,
-  __async,
-  __objRest,
-  __spreadValues,
   concatMap,
   filter,
   finalize,
@@ -43,7 +40,12 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-ERVMBA57.js";
+} from "./chunk-X6RUONED.js";
+import {
+  __async,
+  __objRest,
+  __spreadValues
+} from "./chunk-WKYGNSYM.js";
 
 // node_modules/@angular/common/fesm2022/http.mjs
 var HttpHandler = class {
@@ -2287,9 +2289,9 @@ export {
 
 @angular/common/fesm2022/http.mjs:
   (**
-   * @license Angular v17.3.5
+   * @license Angular v17.3.6
    * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-FDGLRH7H.js.map
+//# sourceMappingURL=chunk-KJGM2PGZ.js.map

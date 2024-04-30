@@ -7,7 +7,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CategoriaService {
-  URL:string = "http://localhost:8080/Orders/categoria"
+  eliminarCategoria(id: number) {
+    return this.http.delete<Categoria>(this.URL+"/"+id);
+  }
+  URL:string = "http://localhost:8000/categoria"
   constructor(private http:HttpClient) { 
   
   }
@@ -16,5 +19,8 @@ export class CategoriaService {
   }
   enviarData(data:any):Observable<Categoria>{
     return this.http.post<Categoria>(this.URL,data);
+  }
+  actualizarData(data:Categoria, id:number):Observable<Categoria>{
+    return this.http.put<Categoria>(this.URL+"/"+id, data);
   }
 }

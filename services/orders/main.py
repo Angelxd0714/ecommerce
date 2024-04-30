@@ -11,8 +11,17 @@ from functions.producto import router_api_producto
 from functions.pedido import router_api_pedido
 from functions.det_pedido import router_api_det_pedido
 from functions.det_producto import router_api_det_prod
-
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(debug=True)
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(router_api_mun)
 app.include_router(router_api_cat)
