@@ -68,5 +68,5 @@ class Login(Resource):
                 permisos_grupo[grupo_nombre] = [{"nombre_permiso":permiso_nombre}]
         token = generate_token({'cliente_id':correo[0].cliente_id,'correo':correo[0].email,"permisos":permisos_grupo,"exp":self.time}) 
         print(permisos_grupo,self.time) 
-        return {'token':token}, 200
+        return {'token':token,'exp':self.time}, 200
             

@@ -10,6 +10,7 @@ export class LoginService {
 
   }
   login(user:user){
-    return this.http.post<user>(this.URL,user);
+   const valor= this.http.post<user>(this.URL,user);
+   return valor
   }
 }

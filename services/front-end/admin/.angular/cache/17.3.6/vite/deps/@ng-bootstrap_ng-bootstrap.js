@@ -1,7 +1,7 @@
 import {
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR
-} from "./chunk-73SYDGCU.js";
+} from "./chunk-7BGANZVR.js";
 import {
   DOCUMENT,
   FormStyle,
@@ -13,7 +13,10 @@ import {
   getLocaleDayPeriods,
   getLocaleMonthNames,
   isPlatformBrowser
-} from "./chunk-XAS4SJBG.js";
+} from "./chunk-BRN7TWXL.js";
+import {
+  takeUntilDestroyed
+} from "./chunk-E622KXXD.js";
 import {
   ApplicationRef,
   Attribute,
@@ -48,7 +51,6 @@ import {
   ViewChildren,
   ViewContainerRef,
   ViewEncapsulation$1,
-  assertInInjectionContext,
   combineLatest,
   createComponent,
   delay,
@@ -129,26 +131,11 @@ import {
   ɵɵtextInterpolate,
   ɵɵtextInterpolate1,
   ɵɵviewQuery
-} from "./chunk-X6RUONED.js";
+} from "./chunk-ICBJUXYP.js";
 import {
   __spreadProps,
   __spreadValues
 } from "./chunk-WKYGNSYM.js";
-
-// node_modules/@angular/core/fesm2022/rxjs-interop.mjs
-function takeUntilDestroyed(destroyRef) {
-  if (!destroyRef) {
-    assertInInjectionContext(takeUntilDestroyed);
-    destroyRef = inject(DestroyRef);
-  }
-  const destroyed$ = new Observable((observer) => {
-    const unregisterFn = destroyRef.onDestroy(observer.next.bind(observer));
-    return unregisterFn;
-  });
-  return (source) => {
-    return source.pipe(takeUntil(destroyed$));
-  };
-}
 
 // node_modules/@popperjs/core/lib/enums.js
 var top = "top";
@@ -235,7 +222,7 @@ function applyStyles(_ref) {
     });
   });
 }
-function effect2(_ref2) {
+function effect(_ref2) {
   var state = _ref2.state;
   var initialStyles = {
     popper: {
@@ -278,7 +265,7 @@ var applyStyles_default = {
   enabled: true,
   phase: "write",
   fn: applyStyles,
-  effect: effect2,
+  effect,
   requires: ["computeStyles"]
 };
 
@@ -527,7 +514,7 @@ function arrow(_ref) {
   var axisProp = axis;
   state.modifiersData[name] = (_state$modifiersData$ = {}, _state$modifiersData$[axisProp] = offset2, _state$modifiersData$.centerOffset = offset2 - center, _state$modifiersData$);
 }
-function effect3(_ref2) {
+function effect2(_ref2) {
   var state = _ref2.state, options = _ref2.options;
   var _options$element = options.element, arrowElement = _options$element === void 0 ? "[data-popper-arrow]" : _options$element;
   if (arrowElement == null) {
@@ -549,7 +536,7 @@ var arrow_default = {
   enabled: true,
   phase: "main",
   fn: arrow,
-  effect: effect3,
+  effect: effect2,
   requires: ["popperOffsets"],
   requiresIfExists: ["preventOverflow"]
 };
@@ -684,7 +671,7 @@ var computeStyles_default = {
 var passive = {
   passive: true
 };
-function effect4(_ref) {
+function effect3(_ref) {
   var state = _ref.state, instance = _ref.instance, options = _ref.options;
   var _options$scroll = options.scroll, scroll = _options$scroll === void 0 ? true : _options$scroll, _options$resize = options.resize, resize = _options$resize === void 0 ? true : _options$resize;
   var window2 = getWindow(state.elements.popper);
@@ -714,7 +701,7 @@ var eventListeners_default = {
   phase: "write",
   fn: function fn() {
   },
-  effect: effect4,
+  effect: effect3,
   data: {}
 };
 
@@ -1578,9 +1565,9 @@ function popperGenerator(generatorOptions) {
     });
     function runModifierEffects() {
       state.orderedModifiers.forEach(function(_ref) {
-        var name = _ref.name, _ref$options = _ref.options, options2 = _ref$options === void 0 ? {} : _ref$options, effect5 = _ref.effect;
-        if (typeof effect5 === "function") {
-          var cleanupFn = effect5({
+        var name = _ref.name, _ref$options = _ref.options, options2 = _ref$options === void 0 ? {} : _ref$options, effect4 = _ref.effect;
+        if (typeof effect4 === "function") {
+          var cleanupFn = effect4({
             state,
             name,
             instance,
@@ -16925,13 +16912,4 @@ export {
   NgbTypeaheadModule,
   OffcanvasDismissReasons
 };
-/*! Bundled license information:
-
-@angular/core/fesm2022/rxjs-interop.mjs:
-  (**
-   * @license Angular v17.3.6
-   * (c) 2010-2024 Google LLC. https://angular.io/
-   * License: MIT
-   *)
-*/
 //# sourceMappingURL=@ng-bootstrap_ng-bootstrap.js.map
