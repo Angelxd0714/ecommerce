@@ -4,6 +4,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { user } from '../../interfaces/login';
+import { Token } from '../../interfaces/token';
 
 @Component({
   selector: 'app-login',
@@ -13,17 +14,24 @@ import { user } from '../../interfaces/login';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
- private servicioLogin$= Inject(LoginService)
- login = new FormGroup({
-  correo: new FormControl('', Validators.required),
-  constrasena: new FormControl('', Validators.required)
- })
- onSubmit():void{
-   if(!this.login.invalid){
-     this.servicioLogin$.login(this.login.value).subscribe((data:user)=>{
-       console.log(data)
-     })
-   }
-  
- }
+  constructor(private _loginService: LoginService){
+
+  }
+  login = new FormGroup({
+    correo: new FormControl('', Validators.required),
+    contrasena: new FormControl('', Validators.required)
+  })
+  onSubmit(e: any): void {
+    e.preventDefault();
+    let user = {
+      correo: this.login.value.correo as string, // Assert `correo` is a string
+      contrasena: this.login.value.contrasena as string // Assert `contrasena` is a string
+    };
+    console.log(user)
+    this._loginService.login(user).subscribe((data: Token) => {
+      console.log(data)
+    })
+
+
+  }
 }

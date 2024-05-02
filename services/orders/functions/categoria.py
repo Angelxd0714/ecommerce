@@ -14,7 +14,8 @@ from fastapi import HTTPException
 router_api_cat = APIRouter()
 
 
-@router_api_cat.get("/categoria",response_model=List[Categoria],tags=["categoria"],status_code=status.HTTP_200_OK)  # Ruta protegida por el middleware de autenticación. Solo los usuarios con rol "admin" pueden acceder a esta ruta.     # El decorador auth_required() recibe el nombre del rol que debe tener el usuario para acceder a la ruta.
+@router_api_cat.get("/categoria",response_model=List[Categoria],tags=["categoria"],status_code=status.HTTP_200_OK) 
+@auth_required("view") # Ruta protegida por el middleware de autenticación. Solo los usuarios con rol "admin" pueden acceder a esta ruta.     # El decorador auth_required() recibe el nombre del rol que debe tener el usuario para acceder a la ruta.
 async def get_all(request:Request,response:Response,db:Session=Depends(get_db)):
     try:
         categoria = db.query(CATEGORIA).order_by(CATEGORIA.id).all()
@@ -26,7 +27,7 @@ async def get_all(request:Request,response:Response,db:Session=Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error interno del servidor")
 
 @router_api_cat.get("/categoria/{id}",response_model=Categoria,tags=["categoria"],status_code=status.HTTP_200_OK)
- # El decorador auth_required() recibe el nombre del rol que debe tener el usuario para acceder a la ruta.
+@auth_required("view")
 async def get_one(id:int,request:Request,response:Response,db:Session=Depends(get_db)):
     try:
         categoria = db.query(CATEGORIA).filter(CATEGORIA.id == id).first()
@@ -38,6 +39,7 @@ async def get_one(id:int,request:Request,response:Response,db:Session=Depends(ge
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error interno del servidor")
 
 @router_api_cat.post("/categoria",response_model=Categoria,tags=["categoria"],status_code=status.HTTP_201_CREATED)
+@auth_required("insert")
 async def create_categoria(request:Request,categoria: Categoria,response:Response,db:Session=Depends(get_db)):
     try:
         categoria_db = CATEGORIA(nombre=categoria.nombre)  # Crea una instancia del modelo de Categoría
@@ -50,7 +52,7 @@ async def create_categoria(request:Request,categoria: Categoria,response:Respons
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f'{e}')
 
 @router_api_cat.put("/categoria/{id}",response_model=Categoria,tags=["categoria"],status_code=status.HTTP_200_OK)
-
+@auth_required("update")
 async def update_categoria(request: Request, id: int, categoria: Categoria, response: Response, db: Session = Depends(get_db)):
     try:
         # Filtrar la categoría que se desea actualizar
@@ -71,7 +73,7 @@ async def update_categoria(request: Request, id: int, categoria: Categoria, resp
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @router_api_cat.delete("/categoria/{id}",response_model=Categoria,tags=["categoria"],status_code=status.HTTP_200_OK)
-
+@auth_required("delete")
 async def delete_categoria(request:Request,id:int, response:Response, db:Session=Depends(get_db)):
     try:
         categoria = db.query(CATEGORIA).filter(CATEGORIA.id == id).first()

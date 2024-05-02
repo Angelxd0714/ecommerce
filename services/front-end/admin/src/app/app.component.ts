@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DashboardComponent } from "./components/page/dashboard/dashboard.component";
-import { StoreModule } from '@ngrx/store';
-import { authReducer } from './state/reducers';
+
+
 
 @Component({
     selector: 'app-root',
