@@ -1,0 +1,25 @@
+server:
+  port: 8090
+
+
+spring:
+  application:
+    name: auth
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://serverecommerce.database.windows.net:1433;database=ecommerce;user=angel@serverecommerce;password=141198Ss;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    username: angel
+    password: 141198
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database: sql_server
+    database-platform: org.hibernate.dialect.SQLServerDialect
+  config:
+    import: optional:configserver:http://localhost:8888
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

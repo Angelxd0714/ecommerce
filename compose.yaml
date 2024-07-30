@@ -1,0 +1,35 @@
+
+
+services:
+  auth-service:
+    build:
+      context: ./auth  # Directorio donde se encuentra el Dockerfile
+      dockerfile: Dockerfile  # Nombre del Dockerfile
+    ports:
+      - "8090:8090"  # Mapea el puerto 8090 del contenedor al puerto 8090 en tu máquina local
+    environment:
+      - SPRING_APPLICATION_NAME=auth
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://serverecommerce.database.windows.net:1433;database=ecommerce;user=angel@serverecommerce;password=141198Ss;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+      - SPRING_DATASOURCE_USERNAME=angel
+      - SPRING_DATASOURCE_PASSWORD=141198Ss
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.SQLServerDialect
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://localhost:8888
+      - EUREKA_INSTANCE_HOSTNAME=localhost
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://localhost:8761/eureka
+    depends_on:
+      - db  # Si estás usando un contenedor de base de datos
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Passw0rd
+    ports:
+      - "1433:1433"  # Mapea el puerto 1433 del contenedor al puerto 1433 en tu máquina local
+
+  # Opcional: Configura otros servicios necesarios aquí
+
+volumes:
+  db-data:

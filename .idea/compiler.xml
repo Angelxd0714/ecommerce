@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="gestionSend" />
+        <module name="gestionUsers" />
+        <module name="auth" />
+        <module name="eureka" />
+        <module name="gestionOrders" />
+        <module name="conf" />
+        <module name="api" />
+        <module name="gestionProducts" />
+        <module name="gestionPay" />
+        <module name="gestionStoreCar" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api" options="-parameters" />
+      <module name="auth" options="-parameters" />
+      <module name="conf" options="-parameters" />
+      <module name="eureka" options="-parameters" />
+      <module name="gestionOrders" options="-parameters" />
+      <module name="gestionPay" options="-parameters" />
+      <module name="gestionProducts" options="-parameters" />
+      <module name="gestionSend" options="-parameters" />
+      <module name="gestionStoreCar" options="-parameters" />
+      <module name="gestionUsers" options="-parameters" />
+    </option>
+  </component>
+</project>

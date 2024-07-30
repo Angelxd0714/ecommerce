@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/auth/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/conf/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gestionOrders/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gestionPay/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gestionProducts/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gestionSend/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gestionStoreCar/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gestionUsers/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
